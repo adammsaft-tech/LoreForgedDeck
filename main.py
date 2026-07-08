@@ -3,6 +3,8 @@ import random
 
 from screens.home_screen import show_home_screen
 
+from screens.dice_screen import show_dice_screen
+
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
@@ -28,69 +30,7 @@ class LoreforgedDeck(ctk.CTk):
         show_home_screen(self)
 
     def show_dice_screen(self):
-        self.clear_screen()
-
-        title = ctk.CTkLabel(
-            self,
-            text="🎲 Dice Roller",
-            font=("Arial", 34, "bold")
-        )
-        title.pack(pady=(20, 10))
-
-        dice_frame = ctk.CTkFrame(self)
-        dice_frame.pack(pady=10)
-
-        dice = [4, 6, 8, 10, 12, 20, 100]
-
-        for die in dice:
-            button = ctk.CTkButton(
-                dice_frame,
-                text=f"D{die}",
-                width=90,
-                height=45,
-                font=("Arial", 16),
-                command=lambda d=die: self.roll_die(d)
-            )
-            button.pack(side="left", padx=5, pady=10)
-
-        modifier_label = ctk.CTkLabel(
-            self,
-            text="Modifier",
-            font=("Arial", 18)
-        )
-        modifier_label.pack(pady=(15, 5))
-
-        self.modifier_entry = ctk.CTkEntry(
-            self,
-            width=100,
-            font=("Arial", 18),
-            justify="center"
-        )
-        self.modifier_entry.insert(0, "0")
-        self.modifier_entry.pack()
-
-        self.result_label = ctk.CTkLabel(
-            self,
-            text="Choose a die!",
-            font=("Arial", 28, "bold")
-        )
-        self.result_label.pack(pady=15)
-
-        self.history_label = ctk.CTkLabel(
-            self,
-            text="Roll History",
-            font=("Arial", 16),
-            justify="left"
-        )
-        self.history_label.pack(pady=5)
-
-        back_button = ctk.CTkButton(
-            self,
-            text="← Back",
-            width=120,
-            command=self.show_home_screen
-        )
-        back_button.pack(side="bottom", pady=15)
+        show_dice_screen(self)
 
     def roll_die(self, sides):
         self.current_die = sides
