@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import random
 
+from screens.home_screen import show_home_screen
+
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
@@ -23,56 +25,7 @@ class LoreforgedDeck(ctk.CTk):
             widget.destroy()
 
     def show_home_screen(self):
-        self.clear_screen()
-
-        title = ctk.CTkLabel(
-            self,
-            text="⚔ Loreforged Deck ⚔",
-            font=("Arial", 36, "bold")
-        )
-        title.pack(pady=(50, 10))
-
-        subtitle = ctk.CTkLabel(
-            self,
-            text="Adventurer's Companion",
-            font=("Arial", 18)
-        )
-        subtitle.pack(pady=(0, 40))
-
-        dice_button = ctk.CTkButton(
-            self,
-            text="🎲 Dice Roller",
-            width=250,
-            height=45,
-            font=("Arial", 18),
-            command=self.show_dice_screen
-        )
-        dice_button.pack(pady=10)
-
-        character_button = ctk.CTkButton(
-            self,
-            text="👤 Characters",
-            width=250,
-            height=45,
-            font=("Arial", 18)
-        )
-        character_button.pack(pady=10)
-
-        settings_button = ctk.CTkButton(
-            self,
-            text="⚙ Settings",
-            width=250,
-            height=45,
-            font=("Arial", 18)
-        )
-        settings_button.pack(pady=10)
-
-        version = ctk.CTkLabel(
-            self,
-            text="Version 0.2",
-            font=("Arial", 12)
-        )
-        version.pack(side="bottom", pady=10)
+        show_home_screen(self)
 
     def show_dice_screen(self):
         self.clear_screen()
