@@ -33,7 +33,8 @@ def show_home_screen(app):
         text="👤 Characters",
         width=250,
         height=45,
-        font=("Arial", 18)
+        font=("Arial", 18),
+        command=app.show_character_screen
     )
     character_button.pack(pady=10)
 

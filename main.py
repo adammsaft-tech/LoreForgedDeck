@@ -2,8 +2,9 @@ import customtkinter as ctk
 import random
 
 from screens.home_screen import show_home_screen
-
 from screens.dice_screen import show_dice_screen
+from screens.character_screen import show_character_screen
+
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
@@ -32,6 +33,9 @@ class LoreforgedDeck(ctk.CTk):
     def show_dice_screen(self):
         show_dice_screen(self)
 
+    def show_character_screen(self):
+        show_character_screen(self)
+
     def roll_die(self, sides):
         self.current_die = sides
         self.roll_animation_count = 0
@@ -42,10 +46,9 @@ class LoreforgedDeck(ctk.CTk):
         temp_roll = random.randint(1, self.current_die)
         self.result_label.configure(text=f"Rolling... {temp_roll}")
 
-        delay = self.animation_speeds[self.roll_animation_count]
-        self.roll_animation_count += 1
-
         if self.roll_animation_count < len(self.animation_speeds):
+            delay = self.animation_speeds[self.roll_animation_count]
+            self.roll_animation_count += 1
             self.after(delay, self.animate_roll)
         else:
             self.finish_roll()
@@ -67,7 +70,9 @@ class LoreforgedDeck(ctk.CTk):
             result_text = f"D{self.current_die}: {roll} + {modifier} = {total}"
 
         self.result_label.configure(text=result_text)
-        self.add_to_history(f"D{self.current_die}: {roll} + {modifier} = {total}")
+        self.add_to_history(
+            f"D{self.current_die}: {roll} + {modifier} = {total}"
+        )
 
     def add_to_history(self, roll_text):
         self.roll_history.insert(0, roll_text)
