@@ -9,6 +9,7 @@ from screens.character_screen import show_character_screen
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
+MAX_HISTORY = 5
 
 class LoreforgedDeck(ctk.CTk):
     def __init__(self):
@@ -77,7 +78,18 @@ class LoreforgedDeck(ctk.CTk):
     def add_to_history(self, roll_text):
         self.roll_history.insert(0, roll_text)
 
-        if len(self.roll_history) > 8:
+        if len(self.roll_history) > MAX_HISTORY:
+            self.roll_history.pop()
+
+        self.history_label.configure(
+            text="\n".join(self.roll_history)
+        )
+
+    def clear_history(self):
+        self.roll_history.clear()
+        self.history_label.configure(text="")
+
+        if len(self.roll_history) > MAX_HISTORY:
             self.roll_history.pop()
 
         history_text = "Roll History\n\n" + "\n".join(self.roll_history)
