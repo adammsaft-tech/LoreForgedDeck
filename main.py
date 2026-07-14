@@ -61,10 +61,31 @@ class LoreforgedDeck(ctk.CTk):
             return
 
         character_data = {
-            "name": name,
-            "class": character_class,
-            "level": level
-        }
+    "name": name,
+    "class": character_class,
+    "level": level,
+
+    "race": "",
+    "background": "",
+
+    "strength": 10,
+    "dexterity": 10,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 10,
+
+    "hp_current": 10,
+    "hp_max": 10,
+
+    "armor_class": 10,
+    "initiative": 0,
+    "speed": 30,
+
+    "inventory": [],
+    "spells": [],
+    "notes": ""
+}
 
         characters_folder = os.path.join(
             os.path.dirname(__file__),
@@ -117,54 +138,274 @@ class LoreforgedDeck(ctk.CTk):
 
     def show_character_details(self, character):
         self.clear_screen()
-
         self.selected_character = character
 
+        # Character information
         name = character.get("name", "Unnamed Character")
         character_class = character.get("class", "Unknown Class")
         level = character.get("level", 1)
+        race = character.get("race", "Unknown Race")
 
-        title = ctk.CTkLabel(
-            self,
-            text=name,
-            font=("Arial", 34, "bold")
+        hp_current = character.get("hp_current", 10)
+        hp_max = character.get("hp_max", 10)
+        armor_class = character.get("armor_class", 10)
+        initiative = character.get("initiative", 0)
+        speed = character.get("speed", 30)
+
+        ability_scores = {
+            "STR": character.get("strength", 10),
+            "DEX": character.get("dexterity", 10),
+            "CON": character.get("constitution", 10),
+            "INT": character.get("intelligence", 10),
+            "WIS": character.get("wisdom", 10),
+            "CHA": character.get("charisma", 10)
+        }
+
+        # Allow the character sheet to resize properly
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.grid_columnconfigure(0, weight=1)
+
+        # ---------- Header ----------
+
+        header_frame = ctk.CTkFrame(self)
+        header_frame.grid(
+            row=0,
+            column=0,
+            sticky="ew",
+            padx=20,
+            pady=(15, 8)
         )
-        title.pack(pady=(45, 15))
 
-        details = ctk.CTkLabel(
-            self,
+        name_label = ctk.CTkLabel(
+            header_frame,
+            text=f"⚔ {name} ⚔",
+            font=("Arial", 30, "bold")
+        )
+        name_label.pack(pady=(10, 2))
+
+        class_label = ctk.CTkLabel(
+            header_frame,
             text=f"Level {level} {character_class}",
-            font=("Arial", 22)
+            font=("Arial", 19)
         )
-        details.pack(pady=10)
+        class_label.pack()
+
+        race_label = ctk.CTkLabel(
+            header_frame,
+            text=race,
+            font=("Arial", 15)
+        )
+        race_label.pack(pady=(2, 10))
+
+        # ---------- Scrollable character sheet ----------
+
+        sheet_frame = ctk.CTkScrollableFrame(self)
+        sheet_frame.grid(
+            row=1,
+            column=0,
+            sticky="nsew",
+            padx=20,
+            pady=5
+        )
+
+        sheet_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+
+        # ---------- Main combat stats ----------
+
+        stat_values = [
+            ("❤ HP", f"{hp_current} / {hp_max}"),
+            ("🛡 AC", str(armor_class)),
+            ("⚡ Initiative", f"{initiative:+d}"),
+            ("👣 Speed", f"{speed} ft")
+        ]
+
+        for column, (label_text, value_text) in enumerate(stat_values):
+            stat_card = ctk.CTkFrame(sheet_frame)
+            stat_card.grid(
+                row=0,
+                column=column,
+                sticky="nsew",
+                padx=5,
+                pady=8
+            )
+
+            stat_label = ctk.CTkLabel(
+                stat_card,
+                text=label_text,
+                font=("Arial", 15, "bold")
+            )
+            stat_label.pack(pady=(10, 3))
+
+            stat_value = ctk.CTkLabel(
+                stat_card,
+                text=value_text,
+                font=("Arial", 22, "bold")
+            )
+            stat_value.pack(pady=(0, 10))
+
+        # ---------- Ability scores ----------
+
+        ability_title = ctk.CTkLabel(
+            sheet_frame,
+            text="Ability Scores",
+            font=("Arial", 21, "bold")
+        )
+        ability_title.grid(
+            row=1,
+            column=0,
+            columnspan=4,
+            pady=(14, 7)
+        )
+
+        for index, (ability, score) in enumerate(ability_scores.items()):
+            modifier = (score - 10) // 2
+            row = 2 + (index // 3)
+            column = index % 3
+
+            ability_card = ctk.CTkFrame(sheet_frame)
+            ability_card.grid(
+                row=row,
+                column=column,
+                sticky="nsew",
+                padx=6,
+                pady=6
+            )
+
+            ability_name = ctk.CTkLabel(
+                ability_card,
+                text=ability,
+                font=("Arial", 16, "bold")
+            )
+            ability_name.pack(pady=(8, 1))
+
+            ability_value = ctk.CTkLabel(
+                ability_card,
+                text=f"{score}  ({modifier:+d})",
+                font=("Arial", 19)
+            )
+            ability_value.pack(pady=(1, 8))
+
+        # Keep the ability score cards centered
+        sheet_frame.grid_columnconfigure(3, minsize=1)
+
+        # ---------- Future feature panels ----------
+
+        section_row = 4
+
+        inventory_frame = ctk.CTkFrame(sheet_frame)
+        inventory_frame.grid(
+            row=section_row,
+            column=0,
+            columnspan=2,
+            sticky="nsew",
+            padx=6,
+            pady=(15, 6)
+        )
+
+        inventory_title = ctk.CTkLabel(
+            inventory_frame,
+            text="🎒 Inventory",
+            font=("Arial", 18, "bold")
+        )
+        inventory_title.pack(pady=(10, 3))
+
+        inventory_message = ctk.CTkLabel(
+            inventory_frame,
+            text="Coming soon",
+            font=("Arial", 14)
+        )
+        inventory_message.pack(pady=(0, 10))
+
+        spellbook_frame = ctk.CTkFrame(sheet_frame)
+        spellbook_frame.grid(
+            row=section_row,
+            column=2,
+            columnspan=2,
+            sticky="nsew",
+            padx=6,
+            pady=(15, 6)
+        )
+
+        spellbook_title = ctk.CTkLabel(
+            spellbook_frame,
+            text="📜 Spellbook",
+            font=("Arial", 18, "bold")
+        )
+        spellbook_title.pack(pady=(10, 3))
+
+        spellbook_message = ctk.CTkLabel(
+            spellbook_frame,
+            text="Coming soon",
+            font=("Arial", 14)
+        )
+        spellbook_message.pack(pady=(0, 10))
+
+        notes_frame = ctk.CTkFrame(sheet_frame)
+        notes_frame.grid(
+            row=section_row + 1,
+            column=0,
+            columnspan=4,
+            sticky="ew",
+            padx=6,
+            pady=8
+        )
+
+        notes_title = ctk.CTkLabel(
+            notes_frame,
+            text="Notes",
+            font=("Arial", 18, "bold")
+        )
+        notes_title.pack(pady=(10, 3))
+
+        notes_text = character.get("notes", "")
+        if not notes_text:
+            notes_text = "No notes written yet."
+
+        notes_label = ctk.CTkLabel(
+            notes_frame,
+            text=notes_text,
+            font=("Arial", 14),
+            wraplength=650,
+            justify="left"
+        )
+        notes_label.pack(padx=15, pady=(0, 12))
+
+        # ---------- Bottom buttons ----------
+
+        bottom_frame = ctk.CTkFrame(self)
+        bottom_frame.grid(
+            row=2,
+            column=0,
+            pady=(5, 15)
+        )
 
         edit_button = ctk.CTkButton(
-            self,
+            bottom_frame,
             text="Edit Character",
-            width=200,
-            height=42,
+            width=170,
             command=self.show_edit_character_screen
         )
-        edit_button.pack(pady=10)
+        edit_button.pack(side="left", padx=8, pady=8)
 
         delete_button = ctk.CTkButton(
-            self,
+            bottom_frame,
             text="Delete Character",
-            width=200,
-            height=42,
+            width=170,
             fg_color="darkred",
             hover_color="red",
             command=self.delete_character
         )
-        delete_button.pack(pady=10)
+        delete_button.pack(side="left", padx=8, pady=8)
 
         back_button = ctk.CTkButton(
-            self,
-            text="← Back to Characters",
-            width=180,
+            bottom_frame,
+            text="← Back",
+            width=120,
             command=self.show_character_screen
         )
-        back_button.pack(side="bottom", pady=25)
+        back_button.pack(side="left", padx=8, pady=8)
 
     def show_edit_character_screen(self):
         self.clear_screen()
